@@ -4,8 +4,6 @@ self.addEventListener("push", (event) => {
   const title = data.title || "A little note for you ♡";
   const options = {
     body: data.body || "A gentle reminder that you are loved.",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-192.png",
     tag: data.tag || "mylove-reminder",
     renotify: false,
     data: { url: data.url || "/" }
