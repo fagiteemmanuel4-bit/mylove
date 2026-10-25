@@ -1,0 +1,9 @@
+{
+  "name": "A Little Note for You",
+  "short_name": "MyLove",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4eef0",
+  "theme_color": "#f4eef0",
+  "description": "A quiet, heartfelt love letter."
+}
