@@ -108,7 +108,8 @@
     #reminder-status { min-height: 1.5em; margin: 12px 0 0; font: 12px/1.6 Arial, sans-serif; color: var(--muted); }
     .reminder-secondary { background: transparent; color: var(--rose-deep); box-shadow: none; }
     .reminder-secondary:hover { color: white; }
-\n    @media (max-width: 480px) { body { padding: 14px 10px; } .letter { border-radius: 19px; } p { font-size: 16px; line-height: 1.85; } }
+
+    @media (max-width: 480px) { body { padding: 14px 10px; } .letter { border-radius: 19px; } p { font-size: 16px; line-height: 1.85; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
@@ -144,7 +145,8 @@
       <button id="disable-reminders" class="reminder-secondary" type="button" hidden>Turn reminders off</button>
       <p id="reminder-status" role="status" aria-live="polite">Only enable this on your own device, and only if you want to.</p>
     </section>
-\n    <div class="footer">Written with sincerity, and with you in my heart.</div>
+
+    <div class="footer">Written with sincerity, and with you in my heart.</div>
   </main>
   <script>
     function connectReveal(buttonId, panelId, closedText, openText) {
@@ -159,6 +161,107 @@
     }
     connectReveal("reveal", "extra", "There is something more I want you to know", "Keep these words close to your heart");
     connectReveal("promise", "promise-note", "And one promise, from my heart", "Keep this promise close");
+
+    const PUSH_FUNCTION_URL = "https://maaarltjijaxrgwsqhta.supabase.co/functions/v1/manage-push-subscription";
+    const VAPID_PUBLIC_KEY = "REPLACE_WITH_VAPID_PUBLIC_KEY";
+    const enableButton = document.getElementById("enable-reminders");
+    const disableButton = document.getElementById("disable-reminders");
+    const reminderStatus = document.getElementById("reminder-status");
+
+    function decodeVapidKey(value) {
+      const padded = value + "=".repeat((4 - value.length % 4) % 4);
+      const raw = atob(padded.replace(/-/g, "+").replace(/_/g, "/"));
+      return Uint8Array.from(raw, (character) => character.charCodeAt(0));
+    }
+
+    async function savePushSubscription(action, subscription) {
+      const response = await fetch(PUSH_FUNCTION_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action, subscription, endpoint: subscription.endpoint,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Africa/Lagos"
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Could not update reminders.");
+      return result;
+    }
+
+    async function refreshReminderState() {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        reminderStatus.textContent = "Push reminders are not supported here. On iPhone or iPad, add this website to your Home Screen and open it there.";
+        enableButton.disabled = true;
+        return;
+      }
+      try {
+        const registration = await navigator.serviceWorker.register("/sw.js");
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          enableButton.hidden = true;
+          disableButton.hidden = false;
+          reminderStatus.textContent = "Reminders are enabled on this device. You can turn them off below.";
+        }
+        if (Notification.permission === "denied") {
+          reminderStatus.textContent = "Notifications are blocked in browser settings. You can change that there if you want.";
+        }
+      } catch (error) {
+        console.warn("Push setup unavailable", error);
+      }
+    }
+
+    enableButton.addEventListener("click", async () => {
+      enableButton.disabled = true;
+      try {
+        if (VAPID_PUBLIC_KEY.startsWith("REPLACE_")) {
+          throw new Error("The push keys still need to be configured before reminders can be enabled.");
+        }
+        if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+          throw new Error("This browser does not support push reminders. On iPhone or iPad, add this website to your Home Screen and open it there.");
+        }
+        reminderStatus.textContent = "Asking for permission…";
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") throw new Error("Notifications were not enabled. You can allow them in your browser settings.");
+        const registration = await navigator.serviceWorker.register("/sw.js");
+        let subscription = await registration.pushManager.getSubscription();
+        if (!subscription) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: decodeVapidKey(VAPID_PUBLIC_KEY)
+          });
+        }
+        await savePushSubscription("subscribe", subscription.toJSON());
+        enableButton.hidden = true;
+        disableButton.hidden = false;
+        reminderStatus.textContent = "You're all set. Gentle reminders are scheduled for daytime, about every five hours.";
+      } catch (error) {
+        reminderStatus.textContent = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      } finally {
+        enableButton.disabled = false;
+      }
+    });
+
+    disableButton.addEventListener("click", async () => {
+      disableButton.disabled = true;
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await savePushSubscription("unsubscribe", subscription.toJSON());
+          await subscription.unsubscribe();
+        }
+        disableButton.hidden = true;
+        enableButton.hidden = false;
+        reminderStatus.textContent = "Reminders are turned off for this device.";
+      } catch (error) {
+        reminderStatus.textContent = error instanceof Error ? error.message : "Could not turn reminders off.";
+      } finally {
+        disableButton.disabled = false;
+      }
+    });
+
+    refreshReminderState();
+
   </script>
 </body>
 </html>
