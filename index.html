@@ -100,7 +100,15 @@
     @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
     @keyframes appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes float-up { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: .55; } 85% { opacity: .4; } 100% { transform: translateY(-540px) rotate(22deg); opacity: 0; } }
-    @media (max-width: 480px) { body { padding: 14px 10px; } .letter { border-radius: 19px; } p { font-size: 16px; line-height: 1.85; } }
+
+    .reminder-box { margin-top: 30px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: #fbf6f8; text-align: center; }
+    .reminder-box h2 { margin: 0 0 8px; color: var(--rose-deep); font-size: 23px; font-weight: 400; }
+    .reminder-box p { margin: 8px 0 16px; color: #6f5b64; font: 14px/1.75 Arial, sans-serif; }
+    .reminder-box button { margin-top: 8px; }
+    #reminder-status { min-height: 1.5em; margin: 12px 0 0; font: 12px/1.6 Arial, sans-serif; color: var(--muted); }
+    .reminder-secondary { background: transparent; color: var(--rose-deep); box-shadow: none; }
+    .reminder-secondary:hover { color: white; }
+\n    @media (max-width: 480px) { body { padding: 14px 10px; } .letter { border-radius: 19px; } p { font-size: 16px; line-height: 1.85; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
@@ -128,7 +136,15 @@
     <div id="extra" aria-live="polite">If you could borrow my eyes for just one moment, you might begin to understand why you are so precious to me. I see a person whose presence brings comfort, whose happiness matters to me, and whose place in my heart cannot be measured by a message or a moment. I do not love you only for the way you make me feel; I love the person you are, and I want my actions to keep giving you reasons to believe that. ♡</div>
     <button id="promise" type="button" aria-expanded="false" aria-controls="promise-note">And one promise, from my heart</button>
     <div id="promise-note" style="display:none; margin-top:16px; padding:22px; border:1px solid var(--line); border-radius:16px; background:#f8f2f4; font-size:16px; line-height:1.9; text-align:center;" aria-live="polite">I will never ask you to believe in my love on the strength of words alone. Let me show you through the way I listen, the respect I give you, the patience I practise, and the care I choose every day. You deserve a love that is both spoken sincerely and lived consistently, and that is the kind of love I want to offer you. ♡</div>
-    <div class="footer">Written with sincerity, and with you in my heart.</div>
+
+    <section class="reminder-box" aria-labelledby="reminder-title">
+      <h2 id="reminder-title">A little note, even when this page is closed</h2>
+      <p>If you would like, I can send gentle check-ins from time to time—little reminders to eat, rest, breathe, and remember you are loved. You can turn them off whenever you want.</p>
+      <button id="enable-reminders" type="button">Enable loving reminders</button>
+      <button id="disable-reminders" class="reminder-secondary" type="button" hidden>Turn reminders off</button>
+      <p id="reminder-status" role="status" aria-live="polite">Only enable this on your own device, and only if you want to.</p>
+    </section>
+\n    <div class="footer">Written with sincerity, and with you in my heart.</div>
   </main>
   <script>
     function connectReveal(buttonId, panelId, closedText, openText) {
