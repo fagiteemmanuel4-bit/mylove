@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff7fb">
+  <meta name="description" content="A little love letter, made just for you.">
+  <title>A Little Note for You</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --pink: #d94f86;
+      --pink-dark: #b83e70;
+      --ink: #553747;
+      --muted: #a17a8b;
+      --paper: #fffdfd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(145deg, #fff8fb 0%, #ffe3ef 100%);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    .letter {
+      position: relative;
+      width: min(100%, 640px);
+      padding: clamp(28px, 6vw, 54px);
+      overflow: hidden;
+      text-align: center;
+      background: var(--paper);
+      border: 1px solid #f7d8e5;
+      border-radius: 28px;
+      box-shadow: 0 20px 65px rgba(157, 82, 112, .12);
+      animation: appear .8s ease both;
+    }
+    .heart {
+      display: inline-block;
+      color: var(--pink);
+      font-size: 46px;
+      line-height: 1;
+      animation: heartbeat 1.8s ease-in-out infinite;
+    }
+    .eyebrow {
+      margin-top: 18px;
+      color: #c45b83;
+      font: 600 11px/1.5 Arial, sans-serif;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 12px 0 30px;
+      color: var(--pink-dark);
+      font-size: clamp(38px, 8vw, 58px);
+      font-weight: 500;
+      letter-spacing: -1.5px;
+    }
+    .greeting {
+      text-align: left;
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin: 18px 0;
+      font-size: 17px;
+      line-height: 1.85;
+      text-align: left;
+    }
+    .signoff {
+      margin-top: 30px;
+      color: var(--pink-dark);
+      font-size: 22px;
+    }
+    button {
+      margin-top: 24px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--pink);
+      color: white;
+      font: 600 14px Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(217, 79, 134, .22);
+      transition: transform .2s ease, background .2s ease;
+    }
+    button:hover { background: var(--pink-dark); transform: translateY(-2px); }
+    button:focus-visible { outline: 3px solid #e8a1c0; outline-offset: 4px; }
+    #extra {
+      display: none;
+      margin-top: 22px;
+      padding: 20px;
+      border-radius: 16px;
+      background: #fff1f7;
+      color: #75445a;
+      font-size: 17px;
+      line-height: 1.8;
+      text-align: center;
+    }
+    .footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font: 12px Arial, sans-serif;
+    }
+    .floating-heart {
+      position: absolute;
+      bottom: -30px;
+      color: #f1a4c3;
+      opacity: 0;
+      pointer-events: none;
+      animation: float-up 7s linear infinite;
+    }
+    .floating-heart:nth-of-type(1) { left: 12%; animation-delay: 1s; }
+    .floating-heart:nth-of-type(2) { left: 82%; animation-delay: 3.5s; }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes appear { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float-up { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: .7; } 85% { opacity: .5; } 100% { transform: translateY(-520px) rotate(25deg); opacity: 0; } }
+    @media (max-width: 480px) {
+      body { padding: 14px; }
+      .letter { border-radius: 22px; }
+      p { font-size: 16px; line-height: 1.8; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="letter">
+    <span class="floating-heart" aria-hidden="true">♡</span>
+    <span class="floating-heart" aria-hidden="true">♡</span>
+    <div class="heart" aria-hidden="true">♡</div>
+    <div class="eyebrow">A little note for you</div>
+    <h1>I Love You</h1>
+
+    <p class="greeting">Hey, my love,</p>
+    <p>Sometimes I wish I could explain just how much you mean to me. You make me smile without even trying, and somehow an ordinary day feels better when I get to talk to you. I hope you know how happy you make me.</p>
+    <p>I feel lucky to have you in my life. I love talking to you, laughing with you, and hearing about your day. Even the smallest things about you can make me smile, and sometimes I catch myself thinking about you for no reason at all.</p>
+    <p>I just want you to know that I mean it when I say I love you. I might not always know the perfect thing to say, but my feelings for you are real, and I care about you so much.</p>
+    <p>Even when life gets busy, I still want to make time for you. I want to be there for the happy moments, the difficult ones, and all the little moments in between. I love you, today and every day.</p>
+
+    <div class="signoff">I love you, always ♡</div>
+    <button id="reveal" type="button" aria-expanded="false" aria-controls="extra">One more little thing</button>
+    <div id="extra">If you could see yourself the way I see you, even for a second, you would understand why you mean so much to me. You are special to me in more ways than I can explain. ♡</div>
+    <div class="footer">made with love, just for you</div>
+  </main>
+  <script>
+    const button = document.getElementById("reveal");
+    const extra = document.getElementById("extra");
+    button.addEventListener("click", () => {
+      const isOpen = extra.style.display === "block";
+      extra.style.display = isOpen ? "none" : "block";
+      button.setAttribute("aria-expanded", String(!isOpen));
+      button.textContent = isOpen ? "One more little thing" : "Keep this close to your heart";
+    });
+  </script>
+</body>
+</html>
